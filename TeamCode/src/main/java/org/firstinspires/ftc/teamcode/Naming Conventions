@@ -1,31 +1,34 @@
 Drive motors and ports - as viewed from back of robot
-Frontleft -
-Frontright -
-Backleft -
-Backright -
+Frontleft - Port:
+Frontright - Port:
+Backleft - Port:
+Backright - Port:
 
 Subsystem 1 - Arm Intake
-
+Servo / Motor
 
 Subsystem 2 - Arm
-
+Motor / Gearbox
 
 Subsystem 3 - Wrist
-
+Servo
 
 Subsystem 4 - Indexer
-
+Servo / Motor
 
 Subsystem 5 - Horizontal Intake
-
+Extension Motor
+Intake Motor
 
 Subsystem 6 - Climbing
-
+Power Motor
+Locking Servo
 
 Subsystem 7 - Shooter
-
+Motor / Gearbox
 
 
 
 
 Subsystem z - Robot scale turret?
+Motor
