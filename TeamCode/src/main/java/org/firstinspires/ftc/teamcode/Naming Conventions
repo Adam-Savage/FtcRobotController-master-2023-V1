@@ -1,8 +1,13 @@
 Drive motors and ports - as viewed from back of robot
-Frontleft - Port:
-Frontright - Port:
-Backleft - Port:
-Backright - Port:
+Leftfront - Port:3
+Rightfront - Port:2
+Leftback - Port:1
+Rightback - Port:0
+
+Expansion Hub
+test - Port:0 (expansion hub)
+
+Testservo - Port:1 (control hub)
 
 Subsystem 1 - Arm Intake
 Servo / Motor

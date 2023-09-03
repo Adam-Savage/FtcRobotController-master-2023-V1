@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
@@ -15,6 +16,11 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("Leftback");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("Rightfront");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("Rightback");
+        DcMotor testBackMotor = hardwareMap.dcMotor.get("test");
+
+        Servo Servotest = hardwareMap.servo.get("Testservo");
+
+        //int z = 0;
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -29,8 +35,9 @@ public class MecanumTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
+            double test = gamepad1.right_stick_y;
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
@@ -40,11 +47,38 @@ public class MecanumTeleOp extends LinearOpMode {
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
+            double testBackPower = (test);
 
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+            testBackMotor.setPower(testBackPower);
+
+//            if(gamepad1.x) {
+//                double servopower = 0.5;
+//            } if(gamepad1.b) {
+//                double servopower = 0;
+//            } else {
+//                double servopower = 0.25;
+//            };
+            if(gamepad1.a) {
+                Servotest.setPosition(1);
+            };
+            if (gamepad1.b) {
+                Servotest.setPosition(0.3);
+            } else {
+                Servotest.setPosition(0.5);
+            };
+
+
+                // Control the servo position
+                //Servotest.setPosition(0.5); // Set servo position to 0.5 (range: 0.0 to 1.0)
+                // You can use gamepad inputs or other logic to control the servo position
+
+                telemetry.addData("Servo Position", Servotest.getPosition());
+                telemetry.update();
+
         }
     }
 }
