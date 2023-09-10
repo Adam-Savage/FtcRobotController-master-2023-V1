@@ -1,39 +1,55 @@
 Drive motors and ports - as viewed from back of robot
+Control Hub
 Leftfront - Port:3
 Rightfront - Port:2
 Leftback - Port:1
 Rightback - Port:0
 
+//Testservo - Port:1
+
+Drone - Port:0
+Wrist - Port:2
+Flip - Port:3
+LClaw - Port:4
+RClaw - Port:5
+
+
 Expansion Hub
-test - Port:0 (expansion hub)
-
-Testservo - Port:1 (control hub)
-
-Subsystem 1 - Arm Intake
-Servo / Motor
-
-Subsystem 2 - Arm
-Motor / Gearbox
-
-Subsystem 3 - Wrist
-Servo
-
-Subsystem 4 - Indexer
-Servo / Motor
-
-Subsystem 5 - Horizontal Intake
-Extension Motor
-Intake Motor
-
-Subsystem 6 - Climbing
-Power Motor
-Locking Servo
-
-Subsystem 7 - Shooter
-Motor / Gearbox
+Lift - Port:0
+GBox1 - Port:1
+GBox2 - Port:2
 
 
 
+Subsystem 1 - Drivetrain
+4x Motors with 16:1 uP
+    Holonomic Drive - Field Centric
+2x Omni Encoders
+    RoadRunner Pathfinding
 
-Subsystem z - Robot scale turret?
-Motor
+Subsystem 2 - Drone
+1x Small Position Servo
+    Single Release - Time Locked
+
+Subsystem 3 - Linear Extension
+2x Motor in Gearbox
+    Set Points - Scoring (heights)
+    Set Points - Intake (human player & auto stack)
+    Small Adjustments
+
+Subsystem 4 - Wrist
+1x Position Servo
+    Set Points - Scoring (heights)
+    Set Points - Intake (human player & auto stack)
+    Small Adjustments
+
+Subsystem 5 - Claw
+2x 9g Servo
+    Release Left or Right (press button)
+    Release Both (press button)
+1x Position Servo
+    Swap Order (press button)
+
+Subsystem 6 - Climber
+1x Motor 5:1 uP
+
