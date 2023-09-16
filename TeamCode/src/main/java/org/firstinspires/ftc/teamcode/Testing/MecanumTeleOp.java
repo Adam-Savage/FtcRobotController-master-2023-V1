@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
@@ -34,7 +35,7 @@ public class MecanumTeleOp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
             double extend = gamepad1.right_stick_y;
@@ -49,11 +50,36 @@ public class MecanumTeleOp extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
             double verticalExtensionPower = (extend);
 
-            frontLeftMotor.setPower(frontLeftPower);
+            if (gamepad1.left_trigger>0.1){
+                frontLeftMotor.setPower(-gamepad1.left_trigger);
+                frontRightMotor.setPower(gamepad1.left_trigger);
+                backLeftMotor.setPower(gamepad1.left_trigger);
+                backRightMotor.setPower(-gamepad1.left_trigger);
+            }
+            else if (gamepad1.right_trigger>0.1){
+                frontLeftMotor.setPower(gamepad1.right_trigger);
+                frontRightMotor.setPower(-gamepad1.right_trigger);
+                backLeftMotor.setPower(-gamepad1.right_trigger);
+                backRightMotor.setPower(gamepad1.right_trigger);
+            }
+            else{
+//                frontLeftMotor.setPower(-gamepad1.left_stick_y);
+//                frontRightMotor.setPower(-gamepad1.right_stick_y);
+//                backLeftMotor.setPower(-gamepad1.left_stick_y);
+//                backRightMotor.setPower(-gamepad1.right_stick_y);
+                double drive = -gamepad1.left_stick_y;
+                double turn = gamepad1.right_stick_x;
+                frontLeftMotor.setPower(Range.clip(drive+turn,-1.0,1.0));
+                backLeftMotor.setPower(Range.clip(drive+turn,-1.0,1.0));
+                frontRightMotor.setPower(Range.clip(drive-turn,-1.0,1.0));
+                backRightMotor.setPower(Range.clip(drive-turn,-1.0,1.0));
+            }
+
+            /*frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-            verticalExtension.setPower(verticalExtensionPower);
+            verticalExtension.setPower(verticalExtensionPower);*/
 
 //            if(gamepad1.x) {
 //                double servopower = 0.5;
@@ -64,13 +90,13 @@ public class MecanumTeleOp extends LinearOpMode {
 //            };
             if(gamepad1.a) {
                 Servotest.setPosition(1);
-            };
+            }
             else if (gamepad1.b) {
                 Servotest.setPosition(0.3);
-            };
+            }
             else {
                 Servotest.setPosition(0.5);
-            };
+            }
 
 
                 // Control the servo position

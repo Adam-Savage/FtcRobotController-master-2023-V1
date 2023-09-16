@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class VertExtensionPositionControl extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotor verticalExtension = hardwareMap.dcMotor.get("test");
+        DcMotor motor = hardwareMap.dcMotor.get("test");
 
         int minPosition = 0;
         int maxPosition = 500;
@@ -16,7 +16,7 @@ public class VertExtensionPositionControl extends LinearOpMode{
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setTargetPosition(0);
         motor.setPower(0);
-        motor.setTargetPositionTolerance(10);
+        //motor.setTargetPositionTolerance(10);
 
         waitForStart();
 
@@ -40,7 +40,7 @@ public class VertExtensionPositionControl extends LinearOpMode{
 
 
 
-            telemetry.addData("Right Stick Y", extend);
+            //telemetry.addData("Right Stick Y", extend);
             telemetry.update();
         }
     }
