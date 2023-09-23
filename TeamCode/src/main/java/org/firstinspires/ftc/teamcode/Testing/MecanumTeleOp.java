@@ -17,9 +17,11 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("Leftback");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("Rightfront");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("Rightback");
-        DcMotor verticalExtension = hardwareMap.dcMotor.get("test");
+        //DcMotor verticalExtension = hardwareMap.dcMotor.get("test");
 
-        Servo Servotest = hardwareMap.servo.get("Testservo");
+        //Servo Servotest = hardwareMap.servo.get("Testservo");
+        Servo Servo1 = hardwareMap.servo.get("1");
+        Servo Servo2 = hardwareMap.servo.get("2");
 
         //int z = 0;
 
@@ -89,13 +91,16 @@ public class MecanumTeleOp extends LinearOpMode {
 //                double servopower = 0.25;
 //            };
             if(gamepad1.a) {
-                Servotest.setPosition(1);
+                Servo1.setPosition(0.55);
+                Servo2.setPosition(0.05);
             }
-            else if (gamepad1.b) {
-                Servotest.setPosition(0.3);
-            }
+//            else if (gamepad1.b) {
+//                Servo1.setPosition(0.3);
+//                Servo2.setPosition(0.3);
+//            }
             else {
-                Servotest.setPosition(0.5);
+                Servo1.setPosition(0.3);
+                Servo2.setPosition(0.3);
             }
 
 
@@ -103,7 +108,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 //Servotest.setPosition(0.5); // Set servo position to 0.5 (range: 0.0 to 1.0)
                 // You can use gamepad inputs or other logic to control the servo position
 
-                telemetry.addData("Servo Position", Servotest.getPosition());
+                //telemetry.addData("Servo Position", Servotest.getPosition());
                 telemetry.addData("Left Stick X", y);
                 telemetry.addData("Left Stick Y", x);
                 telemetry.addData("Right Stick X", rx);
