@@ -1,55 +1,71 @@
 Drive motors and ports - as viewed from back of robot
+
 Control Hub
+
+Motors
 Leftfront - Port:3
 Rightfront - Port:2
 Leftback - Port:1
 Rightback - Port:0
 
-//Testservo - Port:1
-
-Drone - Port:0
-Wrist - Port:2
-Flip - Port:3
-LClaw - Port:4
-RClaw - Port:5
+Servos
+Left - Port:0
+Right - Port:1
+Position - Port:2
+Wrist - Port:3
+Drone - Port:4
 
 
 Expansion Hub
+
+Motors
 Lift - Port:0
-GBox1 - Port:1
-GBox2 - Port:2
+Climb - Port:1
 
 
+Gamepad Controls List
+Left Stick XY - Drive
+Right Stick X -
+Right Stick Y - Lift
+Dpad UpDown - Climber
+Dpad Left - Swap Wrist
+Dpad Right - Swap Claw
+Button X - Claw Grip
+Button YAB - Lift Positions
+Triggers LR - Strafe
+Bumper L - Drone
+Bumper R - Intake
 
-Subsystem 1 - Drivetrain
-4x Motors with 16:1 uP
-    Holonomic Drive - Field Centric
-2x Omni Encoders
-    RoadRunner Pathfinding
+Subsystem 1 - Drive
+4x Motors with 16:1
+    Drive - POV (Left Stick XY)
+    Strafing - Slow (Triggers LR)
 
-Subsystem 2 - Drone
-1x Small Position Servo
-    Single Release - Time Locked
+Subsystem 2 - Lift
+1x Motor uP
+    Set Points - Scoring & Intake (Buttons YAB)
+    Small Adjustments (Right Stick Y)
 
-Subsystem 3 - Linear Extension
-2x Motor in Gearbox
-    Set Points - Scoring (heights)
-    Set Points - Intake (human player & auto stack)
-    Small Adjustments
+Subsystem 3 - Claw
+2x Servo
+    Toggle Grip (Button X)
+1x Position Servo
+    Swap Order (Dpad Right)
 
 Subsystem 4 - Wrist
 1x Position Servo
-    Set Points - Scoring (heights)
-    Set Points - Intake (human player & auto stack)
-    Small Adjustments
+    Set Points - Scoring & Intake (Dpad Left)
 
-Subsystem 5 - Claw
-2x 9g Servo
-    Release Left or Right (press button)
-    Release Both (press button)
-1x Position Servo
-    Swap Order (press button)
+Subsystem 5 - Climber
+1x Motor uP
+    Extend (Dpad Up)
+    Retract (Dpad Down)
 
-Subsystem 6 - Climber
-1x Motor 5:1 uP
+Subsystem 6 - Drone
+1x Small Position Servo
+    Single Release - Time Locked (Bumper Left)
+
+Subsystem 7 - Intake
+Misc Things
+    On/Off - Hold (Bumper Right)
 
