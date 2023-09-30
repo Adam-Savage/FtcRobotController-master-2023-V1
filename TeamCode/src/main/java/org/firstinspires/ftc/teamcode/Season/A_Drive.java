@@ -32,16 +32,15 @@ public class A_Drive extends LinearOpMode {
         while (opModeIsActive()) {
 
             //Game pad Declaration
-            double y = gamepad1.left_stick_y;
-            double x = -gamepad1.left_stick_x * 1.1; //Strafing Correction
-            double rx = gamepad1.right_stick_x;
+//            double y = gamepad1.left_stick_y;
+//            double rx = gamepad1.left_stick_x;
 
             //Mecanum Calculations
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+//            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+//            double frontLeftPower = (y + x + rx) / denominator;
+//            double backLeftPower = (y - x + rx) / denominator;
+//            double frontRightPower = (y - x - rx) / denominator;
+//            double backRightPower = (y + x - rx) / denominator;
 
             //Mecanum Driving with Triggers
             if (gamepad1.left_trigger>0.1){
@@ -58,7 +57,7 @@ public class A_Drive extends LinearOpMode {
             }
             else{
                 double drive = -gamepad1.left_stick_y;
-                double turn = gamepad1.right_stick_x;
+                double turn = gamepad1.left_stick_x;
                 frontLeftMotor.setPower(Range.clip(drive+turn,-1.0,1.0));
                 backLeftMotor.setPower(Range.clip(drive+turn,-1.0,1.0));
                 frontRightMotor.setPower(Range.clip(drive-turn,-1.0,1.0));
@@ -66,9 +65,10 @@ public class A_Drive extends LinearOpMode {
             }
 
             //Telemetry Update
-            telemetry.addData("Left Stick X", y);
-            telemetry.addData("Left Stick Y", x);
-            telemetry.addData("Right Stick X", rx);
+            telemetry.addData("Left Stick X", gamepad1.left_stick_x);
+            telemetry.addData("Left Stick Y", gamepad1.left_stick_y);
+            telemetry.addData("Strafe Left", gamepad1.left_trigger);
+            telemetry.addData("Strafe Right", gamepad1.right_trigger);
             telemetry.update();
             }
         }

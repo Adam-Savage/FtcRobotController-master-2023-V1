@@ -17,8 +17,8 @@ public class C_Claw extends LinearOpMode {
         Servo ServoR = hardwareMap.servo.get("Right");
 
         //Initialise Servos
-        ServoL.setPosition(0.3);
-        ServoR.setPosition(0.3);
+        ServoL.setPosition(0.55);
+        ServoR.setPosition(0.05);
 
         //Verify Robot Waiting
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -31,22 +31,22 @@ public class C_Claw extends LinearOpMode {
         while (opModeIsActive()) {
 
             //Hold to Grab
-            if(gamepad1.x) {
-                ServoL.setPosition(0.55);
-                ServoR.setPosition(0.05);
-            }
-            else {
-                ServoL.setPosition(0.3);
-                ServoR.setPosition(0.3);
-            }
+//            if(gamepad1.x) {
+//                ServoL.setPosition(0.55);
+//                ServoR.setPosition(0.05);
+//            }
+//            else {
+//                ServoL.setPosition(0.3);
+//                ServoR.setPosition(0.3);
+//            }
 
             //Toggle Grab
-            if (gamepad1.a && !isOpen) {
-                ServoL.setPosition(0.55);
-                ServoR.setPosition(0.05);
+            if (gamepad1.a && isOpen) {
+                // "A" has been pressed and we are already open - so close
+                ServoL.setPosition(0.50);
+                ServoR.setPosition(0.10);
                 isOpen = false;
-            }
-            if (gamepad1.b && isOpen) {
+            } else if (gamepad1.b && !isOpen) {
                 ServoL.setPosition(0.3);
                 ServoR.setPosition(0.3);
                 isOpen = true;

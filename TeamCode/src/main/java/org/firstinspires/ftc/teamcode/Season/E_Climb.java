@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 public class E_Climb extends LinearOpMode {
 
     //Set Speed
-    static final double ClimbSpeedUp = 0.2;
-    static final double ClimbSpeedDown = 0.2;
+    static final double ClimbSpeedUp = -1;
+    static final double ClimbSpeedDown = 0.5;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,6 +38,10 @@ public class E_Climb extends LinearOpMode {
                 Climb.setPower(ClimbSpeedDown);
             else
                 Climb.setPower(0.0);
+
+            //Telemetry Update
+            telemetry.addData("Climb", gamepad1.dpad_up ? "Up" : "Down");
+            telemetry.update();
         }
     }
 }

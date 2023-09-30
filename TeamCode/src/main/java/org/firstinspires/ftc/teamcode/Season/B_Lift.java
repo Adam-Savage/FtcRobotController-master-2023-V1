@@ -38,13 +38,16 @@ public class B_Lift extends LinearOpMode {
             //double Lift = gamepad1.right_stick_y;
 
             //Control Lift
-            if (gamepad1.right_stick_y>0.1)
+            if (gamepad1.right_stick_y > 0.2)
                 Lift.setPower(LiftSpeedUp);
-            else if (gamepad1.right_stick_y<0.1)
+            else if (gamepad1.right_stick_y < 0.2)
                 Lift.setPower(LiftSpeedDown);
             else
                 Lift.setPower(0.0);
 
+            //Telemetry Update
+            telemetry.addData("Lift Power", gamepad1.right_stick_y);
+            telemetry.update();
 
         }
     }
