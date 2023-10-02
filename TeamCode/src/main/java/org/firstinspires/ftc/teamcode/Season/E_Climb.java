@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 public class E_Climb extends LinearOpMode {
 
     //Set Speed
-    static final double ClimbSpeedUp = -1;
-    static final double ClimbSpeedDown = 0.5;
+    static final double ClimbSpeedUp = -0.5;
+    static final double ClimbSpeedDown = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {

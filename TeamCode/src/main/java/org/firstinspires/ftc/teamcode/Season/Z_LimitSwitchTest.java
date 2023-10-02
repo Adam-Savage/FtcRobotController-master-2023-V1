@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 @TeleOp
-public class B_Lift extends LinearOpMode {
+public class Z_LimitSwitchTest extends LinearOpMode {
 
     //Set Speed
     static final double LiftSpeed = -0.5;
@@ -26,6 +27,8 @@ public class B_Lift extends LinearOpMode {
         //Motor Declaration
         DcMotor Lift = hardwareMap.dcMotor.get("Lift");
 
+        //Sensor Declaration
+        DigitalChannel limitSwitch = hardwareMap.digitalChannel.get("limit");
 
         //Encoder Mode
 //        Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -45,6 +48,9 @@ public class B_Lift extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            //Init Switch State
+            boolean isLimitSwitchPressed = limitSwitch.getState();
+
             //Initialise Encoders
             int currentLiftPosition = Lift.getCurrentPosition();
 
@@ -58,6 +64,12 @@ public class B_Lift extends LinearOpMode {
 
 //            double lifting = -gamepad1.right_stick_y;
 //            Lift.setPower(lifting*LiftSpeed);
+
+            //Switch Reset Encoder
+            if (isLimitSwitchPressed) {
+                Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
 
             //Lift Soft Limits
             if (currentLiftPosition < minLiftEncoderCount) {
@@ -85,8 +97,10 @@ public class B_Lift extends LinearOpMode {
             //Telemetry Update
             telemetry.addData("Lift Power", gamepad1.right_stick_y);
             telemetry.addData("Lift Position", currentLiftPosition);
+            telemetry.addData("Limit Switch", isLimitSwitchPressed);
             telemetry.update();
 
         }
     }
 }
+

@@ -40,16 +40,31 @@ public class C_Claw extends LinearOpMode {
 //                ServoR.setPosition(0.3);
 //            }
 
-            //Toggle Grab
-            if (gamepad1.a && isOpen) {
-                // "A" has been pressed and we are already open - so close
-                ServoL.setPosition(0.50);
-                ServoR.setPosition(0.10);
-                isOpen = false;
-            } else if (gamepad1.b && !isOpen) {
-                ServoL.setPosition(0.3);
-                ServoR.setPosition(0.3);
-                isOpen = true;
+            //Toggle Grab (2 button)
+//            if (gamepad1.a && isOpen) {
+//                // "A" has been pressed and we are already open - so close
+//                ServoL.setPosition(0.50);
+//                ServoR.setPosition(0.10);
+//                isOpen = false;
+//            } else if (gamepad1.b && !isOpen) {
+//                ServoL.setPosition(0.3);
+//                ServoR.setPosition(0.3);
+//                isOpen = true;
+//            }
+
+            //Toggle Grab (1 button)
+            // Check if button A is pressed to toggle the servo
+            if (gamepad1.a) {
+                if (isOpen) {
+                    ServoL.setPosition(0.50);
+                    ServoR.setPosition(0.10);
+                    // Close the servo
+                } else {
+                    ServoL.setPosition(0.3);
+                    ServoR.setPosition(0.3);
+                    // Open the servo
+                }
+                isOpen = !isOpen; // Toggle the flag
             }
 
             //Telemetry Update

@@ -28,15 +28,15 @@ public class D_Wrist extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            //Toggle Position
-            if (gamepad1.dpad_left && !isIn) {
-                Wrist.setPosition(1.0);
-                isIn = false;
-            }
-            if (gamepad1.dpad_left && isIn) {
-                Wrist.setPosition(0.0);
-                isIn = true;
-            }
+//            //Toggle Position
+//            if (gamepad1.dpad_left && !isIn) {
+//                Wrist.setPosition(1.0);
+//                isIn = false;
+//            }
+//            if (gamepad1.dpad_left && isIn) {
+//                Wrist.setPosition(0.0);
+//                isIn = true;
+//            }
 
             //Telemetry Update
             telemetry.addData("Wrist State", isIn ? "In" : "Out");
