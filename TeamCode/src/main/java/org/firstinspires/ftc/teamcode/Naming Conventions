@@ -3,27 +3,21 @@ Drive motors and ports - as viewed from back of robot
 Control Hub
 
 Motors
-Leftfront - Port:3
-Rightfront - Port:2
-Leftback - Port:1
-Rightback - Port:0
-
-Servos
-Left - Port:0
-Right - Port:1
-Position - Port:2
-Wrist - Port:3
-Drone - Port:4
-
-Digital Channel
-1. limit
+Leftfront: Port 0
+Rightfront: Port 1
+Lift: Port 2
 
 
 Expansion Hub
 
 Motors
-Lift - Port:0
-Climb - Port:1
+Leftback: Port 0
+Rightback: Port 1
+Climb: Port 2
+
+Servos
+Wrist: Port 5
+Claw: Port 4
 
 
 Gamepad Controls List
@@ -72,3 +66,31 @@ Subsystem 7 - Intake
 Misc Things
     On/Off - Hold (Bumper Right)
 
+
+
+
+OLD LAYOUT
+
+Control Hub
+
+Motors
+Leftfront - Port:3
+Rightfront - Port:2
+Leftback - Port:1
+Rightback - Port:0
+
+Servos
+Left - Port:0
+Right - Port:1
+Position - Port:2
+Wrist - Port:3
+Drone - Port:4
+
+Digital Channel
+1. limit
+
+Expansion Hub
+
+Motors
+Lift - Port:0
+Climb - Port:1

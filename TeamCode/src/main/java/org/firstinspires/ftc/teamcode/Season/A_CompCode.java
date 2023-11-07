@@ -20,15 +20,15 @@ public class A_CompCode extends LinearOpMode {
     static final double LiftSpeed = -0.5;
 
     //Set Endpoints
-    int maxLiftEncoderCount = 5000;
+    int maxLiftEncoderCount = -5000;
     int minLiftEncoderCount = 0;
     int maxClimbEncoderCount = 5000;
-    int minClimbEncoderCount = 0:
+    int minClimbEncoderCount = 0;
 
     //Set Set points
-    int LiftSetPtIntake = 100;
-    int LiftSetPtLvl1 = 2000;
-    int LiftSetPtLvl2 = 4000;
+    int LiftSetPtIntake = -100;
+    int LiftSetPtLvl1 = -2000;
+    int LiftSetPtLvl2 = -4000;
     int ClimbSetPtOut = 2500;
     int ClimbSetPtUp = 1000;
 
@@ -44,26 +44,28 @@ public class A_CompCode extends LinearOpMode {
         DcMotor Climb = hardwareMap.dcMotor.get("Climb");
 
         //Motor Reverse
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Encoder Mode
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Climb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Enable Break
         Climb.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         Lift.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         //Servo Declaration
-        Servo ServoL = hardwareMap.servo.get("Left");
-        Servo ServoR = hardwareMap.servo.get("Right");
+        Servo Wrist = hardwareMap.servo.get("Wrist");
+        Servo Claw = hardwareMap.servo.get("Claw");
 
         //Initialise Servos
-        ServoL.setPosition(0.55);
-        ServoR.setPosition(0.05);
+        Wrist.setPosition(0);
+        Claw.setPosition(0);
 
         //Verify Robot Waiting
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -103,73 +105,85 @@ public class A_CompCode extends LinearOpMode {
 
             //Toggle Grab
             // Check if button A is pressed to toggle the servo
-            if (gamepad1.a) {
-                if (isOpen) {
-                    ServoL.setPosition(0.50);
-                    ServoR.setPosition(0.10);
-                    // Close the servo
-                } else {
-                    ServoL.setPosition(0.3);
-                    ServoR.setPosition(0.3);
-                    // Open the servo
-                }
-                isOpen = !isOpen; // Toggle the flag
-            }
+//            if (gamepad1.a) {
+//                if (isOpen) {
+//                    Claw.setPosition(0.50);
+//                    // Close the servo
+//                } else {
+//                    Claw.setPosition(0.3);
+//                    // Open the servo
+//                }
+//                isOpen = !isOpen; // Toggle the flag
+//            }
 
-            //Climb Soft Limits
-            if (currentClimbPosition < minClimbEncoderCount) {
-                Climb.setPower(0.0);
-                Climb.setTargetPosition(minClimbEncoderCount);
-                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            } else if (currentClimbPosition > maxClimbEncoderCount) {
-                Climb.setPower(0.0);
-                Climb.setTargetPosition(maxClimbEncoderCount);
-                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
+            //Wrist Control
+            if (gamepad2.dpad_up)
+                Wrist.setPosition(-1);
+            else if (gamepad2.dpad_down)
+                Wrist.setPosition(0.4);
+            else
+                Wrist.setPosition(0);
 
-//            //Climb Control
-//            if (gamepad1.dpad_up)
-//                Climb.setPower(ClimbSpeedUp);
-//            else if (gamepad1.dpad_down)
-//                Climb.setPower(ClimbSpeedDown);
-//            else
+            //Claw Control
+            if(gamepad2.dpad_right)
+                Claw.setPosition(0.1);
+            else
+                Claw.setPosition(-0.1);
+
+//            //Climb Soft Limits
+//            if (currentClimbPosition < minClimbEncoderCount) {
 //                Climb.setPower(0.0);
+//                Climb.setTargetPosition(minClimbEncoderCount);
+//                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            } else if (currentClimbPosition > maxClimbEncoderCount) {
+//                Climb.setPower(0.0);
+//                Climb.setTargetPosition(maxClimbEncoderCount);
+//                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            }
 
-            //Climb Set Points
-            if (gamepad1.dpad_up) {
-                Climb.setTargetPosition(ClimbSetPtOut);
+            //Climb Control
+            if (gamepad1.dpad_up)
                 Climb.setPower(ClimbSpeedUp);
-            } else if (gamepad1.dpad_down) {
-                Climb.setTargetPosition(ClimbSetPtUp);
+            else if (gamepad1.dpad_down)
                 Climb.setPower(ClimbSpeedDown);
-            }
+            else
+                Climb.setPower(0.0);
 
-            //Lift Soft Limits
-            if (currentLiftPosition < minLiftEncoderCount) {
-                Lift.setPower(0.0);
-                Lift.setTargetPosition(minLiftEncoderCount);
-                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            } else if (currentLiftPosition > maxLiftEncoderCount) {
-                Lift.setPower(0.0);
-                Lift.setTargetPosition(maxLiftEncoderCount);
-                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
+//            //Climb Set Points
+//            if (gamepad1.dpad_up) {
+//                Climb.setTargetPosition(ClimbSetPtOut);
+//                Climb.setPower(ClimbSpeedUp);
+//            } else if (gamepad1.dpad_down) {
+//                Climb.setTargetPosition(ClimbSetPtUp);
+//                Climb.setPower(ClimbSpeedDown);
+//            }
 
-//            //Control Lift
-//            double lifting = -gamepad1.right_stick_y;
-//            Lift.setPower(lifting*LiftSpeed);
+//            //Lift Soft Limits
+//            if (currentLiftPosition < minLiftEncoderCount) {
+//                Lift.setPower(0.0);
+//                Lift.setTargetPosition(minLiftEncoderCount);
+//                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            } else if (currentLiftPosition > maxLiftEncoderCount) {
+//                Lift.setPower(0.0);
+//                Lift.setTargetPosition(maxLiftEncoderCount);
+//                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            }
 
-            //Lift Set Points
-            if (gamepad1.dpad_right) {
-                Lift.setTargetPosition(LiftSetPtIntake);
-                Lift.setPower(LiftSpeed);
-            } else if (gamepad1.right_bumper) {
-                Lift.setTargetPosition(LiftSetPtLvl1);
-                Lift.setPower(LiftSpeed);
-            } else if (gamepad1.left_bumper) {
-                Lift.setTargetPosition(LiftSetPtLvl2);
-                Lift.setPower(LiftSpeed);
-            }
+            //Control Lift
+            double lifting = gamepad1.right_stick_y;
+            Lift.setPower(lifting*LiftSpeed);
+
+//            //Lift Set Points
+//            if (gamepad1.dpad_right) {
+//                Lift.setTargetPosition(LiftSetPtIntake);
+//                Lift.setPower(LiftSpeed);
+//            } else if (gamepad1.right_bumper) {
+//                Lift.setTargetPosition(LiftSetPtLvl1);
+//                Lift.setPower(LiftSpeed);
+//            } else if (gamepad1.left_bumper) {
+//                Lift.setTargetPosition(LiftSetPtLvl2);
+//                Lift.setPower(LiftSpeed);
+//            }
 
             //Telemetry Update
             telemetry.addData("Left Stick X", gamepad1.left_stick_x);
