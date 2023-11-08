@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class D_Wrist extends LinearOpMode {
 
-    boolean isIn = true;
+    boolean WristOut = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,6 +17,9 @@ public class D_Wrist extends LinearOpMode {
 
         //Initialise Servo
         Wrist.setPosition(0.0);
+
+        // Track the previous state of the button
+        boolean previousLBumperButtonState = false;
 
         //Verify Robot Waiting
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -28,18 +31,35 @@ public class D_Wrist extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-//            //Toggle Position
-//            if (gamepad1.dpad_left && !isIn) {
-//                Wrist.setPosition(1.0);
-//                isIn = false;
-//            }
-//            if (gamepad1.dpad_left && isIn) {
-//                Wrist.setPosition(0.0);
-//                isIn = true;
-//            }
+            // Check the current state of buttons
+            boolean currentLBumperButtonState = gamepad1.left_bumper;
+
+            //Toggle Grab
+            // Check if the button is currently pressed and was not pressed in the previous iteration
+            if (currentLBumperButtonState && !previousLBumperButtonState) {
+                if (WristOut) {
+                    Wrist.setPosition(0.05);
+                    // Wrist in
+                } else {
+                    Wrist.setPosition(0.3);
+                    // Wrist out
+                }
+                WristOut = !WristOut; // Toggle the flag
+            }
+
+            previousLBumperButtonState = currentLBumperButtonState;
+            // Update the previous button state
+
+            //HOLD TO POSITION - Wrist Control
+//            if (gamepad2.dpad_up)
+//                Wrist.setPosition(-1);
+//            else if (gamepad2.dpad_down)
+//                Wrist.setPosition(0.4);
+//            else
+//                Wrist.setPosition(0);
 
             //Telemetry Update
-            telemetry.addData("Wrist State", isIn ? "In" : "Out");
+            telemetry.addData("Wrist State", WristOut ? "Out" : "In");
             telemetry.update();
         }
     }

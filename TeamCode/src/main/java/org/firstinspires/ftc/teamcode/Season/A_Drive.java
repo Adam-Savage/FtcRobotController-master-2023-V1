@@ -18,12 +18,17 @@ public class A_Drive extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.dcMotor.get("Rightback");
 
         //Motor Reverse
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Verify Robot Waiting
         telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();
+
+        double LeftStickY;
+        double LeftStickX;
 
         waitForStart();
 
@@ -42,6 +47,16 @@ public class A_Drive extends LinearOpMode {
 //            double frontRightPower = (y - x - rx) / denominator;
 //            double backRightPower = (y + x - rx) / denominator;
 
+            //Slow Driving
+            if (gamepad1.left_stick_button){
+                LeftStickY = -gamepad1.left_stick_y * 0.5;
+                LeftStickX = gamepad1.left_stick_x * 0.5;
+            }
+            else {
+                LeftStickY = -gamepad1.left_stick_y;
+                LeftStickX = gamepad1.left_stick_x;
+            }
+
             //Mecanum Driving with Triggers
             if (gamepad1.left_trigger>0.1){
                 frontLeftMotor.setPower(-gamepad1.left_trigger);
@@ -56,8 +71,8 @@ public class A_Drive extends LinearOpMode {
                 backRightMotor.setPower(gamepad1.right_trigger);
             }
             else{
-                double drive = -gamepad1.left_stick_y;
-                double turn = gamepad1.left_stick_x;
+                double drive = LeftStickY;
+                double turn = LeftStickX;
                 frontLeftMotor.setPower(Range.clip(drive+turn,-1.0,1.0));
                 backLeftMotor.setPower(Range.clip(drive+turn,-1.0,1.0));
                 frontRightMotor.setPower(Range.clip(drive-turn,-1.0,1.0));

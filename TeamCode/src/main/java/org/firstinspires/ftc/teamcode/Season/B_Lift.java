@@ -10,6 +10,7 @@ public class B_Lift extends LinearOpMode {
 
     //Set Speed
     static final double LiftSpeed = -0.5;
+    static final double ControlLiftSpeed = 0.5;
 
     //Set Endpoints
     int maxLiftEncoderCount = 5000;
@@ -26,11 +27,9 @@ public class B_Lift extends LinearOpMode {
         //Motor Declaration
         DcMotor Lift = hardwareMap.dcMotor.get("Lift");
 
-
         //Encoder Mode
-//        Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Enable Break
         Lift.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
@@ -59,27 +58,40 @@ public class B_Lift extends LinearOpMode {
 //            double lifting = -gamepad1.right_stick_y;
 //            Lift.setPower(lifting*LiftSpeed);
 
+            //Lift Control
+            double lifting = gamepad1.right_stick_y;
+            Lift.setPower(lifting*LiftSpeed);
+
             //Lift Soft Limits
             if (currentLiftPosition < minLiftEncoderCount) {
-                Lift.setPower(0.0);
-                Lift.setTargetPosition(minLiftEncoderCount);
+                Lift.setTargetPosition(minLiftEncoderCount+10);
                 Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Lift.setPower(1);
+                while (opModeIsActive() && Lift.isBusy()) {
+                    currentLiftPosition = Lift.getCurrentPosition();
+                    if(Math.abs(Lift.getTargetPosition() - currentLiftPosition) > 50) {
+                        break;
+                    }
+                }
+                Lift.setPower(LiftSpeed);
             } else if (currentLiftPosition > maxLiftEncoderCount) {
                 Lift.setPower(0.0);
                 Lift.setTargetPosition(maxLiftEncoderCount);
                 Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }  else {
+                Lift.setPower(LiftSpeed);
             }
 
             //Lift Set Points
             if (gamepad1.dpad_right) {
                 Lift.setTargetPosition(LiftSetPtIntake);
-                Lift.setPower(LiftSpeed);
+                Lift.setPower(ControlLiftSpeed);
             } else if (gamepad1.right_bumper) {
                 Lift.setTargetPosition(LiftSetPtLvl1);
-                Lift.setPower(LiftSpeed);
+                Lift.setPower(ControlLiftSpeed);
             } else if (gamepad1.left_bumper) {
                 Lift.setTargetPosition(LiftSetPtLvl2);
-                Lift.setPower(LiftSpeed);
+                Lift.setPower(ControlLiftSpeed);
             }
 
             //Telemetry Update

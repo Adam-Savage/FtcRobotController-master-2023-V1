@@ -7,18 +7,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class C_Claw extends LinearOpMode {
 
-    boolean isOpen = false;
+    boolean ClawOpen = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         //Servo Declaration
-        Servo ServoL = hardwareMap.servo.get("Left");
-        Servo ServoR = hardwareMap.servo.get("Right");
+        Servo Claw = hardwareMap.servo.get("Claw");
 
         //Initialise Servos
-        ServoL.setPosition(0.55);
-        ServoR.setPosition(0.05);
+        Claw.setPosition(0.2);
+
+        // Track the previous state of the button
+        boolean previousRBumperButtonState = false;
 
         //Verify Robot Waiting
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -30,45 +31,34 @@ public class C_Claw extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            //Hold to Grab
-//            if(gamepad1.x) {
-//                ServoL.setPosition(0.55);
-//                ServoR.setPosition(0.05);
-//            }
-//            else {
-//                ServoL.setPosition(0.3);
-//                ServoR.setPosition(0.3);
-//            }
+            // Check the current state of buttons
+            boolean currentRBumperButtonState = gamepad1.right_bumper;
 
-            //Toggle Grab (2 button)
-//            if (gamepad1.a && isOpen) {
-//                // "A" has been pressed and we are already open - so close
-//                ServoL.setPosition(0.50);
-//                ServoR.setPosition(0.10);
-//                isOpen = false;
-//            } else if (gamepad1.b && !isOpen) {
-//                ServoL.setPosition(0.3);
-//                ServoR.setPosition(0.3);
-//                isOpen = true;
-//            }
-
-            //Toggle Grab (1 button)
-            // Check if button A is pressed to toggle the servo
-            if (gamepad1.a) {
-                if (isOpen) {
-                    ServoL.setPosition(0.50);
-                    ServoR.setPosition(0.10);
-                    // Close the servo
+            //Toggle Grab
+            // Check if the button is currently pressed and was not pressed in the previous iteration
+            if (currentRBumperButtonState && !previousRBumperButtonState) {
+                if (ClawOpen) {
+                    Claw.setPosition(0);
+                    // Claw close
                 } else {
-                    ServoL.setPosition(0.3);
-                    ServoR.setPosition(0.3);
-                    // Open the servo
+                    Claw.setPosition(0.2);
+                    // Claw open
                 }
-                isOpen = !isOpen; // Toggle the flag
+                ClawOpen = !ClawOpen; // Toggle the flag
             }
 
+            previousRBumperButtonState = currentRBumperButtonState;
+            // Update the previous button state
+
+
+//            //HOLD TO GRAB - Claw Control
+//            if(gamepad2.dpad_right)
+//                Claw.setPosition(0.1);
+//            else
+//                Claw.setPosition(-0.1);
+
             //Telemetry Update
-            telemetry.addData("Claw State", isOpen ? "Open" : "Closed");
+            telemetry.addData("Claw State", ClawOpen ? "Open" : "Closed");
             telemetry.update();
         }
     }

@@ -12,11 +12,19 @@ public class E_Climb extends LinearOpMode {
     static final double ClimbSpeedUp = -0.5;
     static final double ClimbSpeedDown = 1;
 
+    //Set Points
+    int ClimbSetPtUp = -1000;
+    int ClimbSetPtDown = -100;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         //Motor Declaration
         DcMotor Climb = hardwareMap.dcMotor.get("Climb");
+
+        //Encoder Mode
+        Climb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Enable Break
         Climb.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
@@ -31,7 +39,7 @@ public class E_Climb extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            //Control Lift
+            //Climb Control
             if (gamepad1.dpad_up)
                 Climb.setPower(ClimbSpeedUp);
             else if (gamepad1.dpad_down)
@@ -39,7 +47,28 @@ public class E_Climb extends LinearOpMode {
             else
                 Climb.setPower(0.0);
 
+            //Climb Soft Limits
+//            if (currentClimbPosition < minClimbEncoderCount) {
+//                Climb.setPower(0.0);
+//                Climb.setTargetPosition(minClimbEncoderCount);
+//                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            } else if (currentClimbPosition > maxClimbEncoderCount) {
+//                Climb.setPower(0.0);
+//                Climb.setTargetPosition(maxClimbEncoderCount);
+//                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            }
+
+//            //Climb Set Points
+//            if (gamepad1.dpad_up) {
+//                Climb.setTargetPosition(ClimbSetPtDown);
+//                Climb.setPower(ClimbSpeedUp);
+//            } else if (gamepad1.dpad_down) {
+//                Climb.setTargetPosition(ClimbSetPtUp);
+//                Climb.setPower(ClimbSpeedDown);
+//            }
+
             //Telemetry Update
+            telemetry.addData("Clumb Position", Climb.getCurrentPosition());
             telemetry.addData("Climb", gamepad1.dpad_up ? "Up" : "Down");
             telemetry.update();
         }
