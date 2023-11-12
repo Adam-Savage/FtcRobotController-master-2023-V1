@@ -38,18 +38,19 @@ public class A_CompCode extends LinearOpMode {
 //---------------------------------------------------------------------------
 
     //Motor Set Points
-    int LiftSetPtIntake = 10;
-    int LiftSetPtLvl1 = 450;
-    int LiftSetPtLvl2 = 900;
+    int LiftSetPtIntake = 0;
+    int LiftSetPtLvl1 = 600;
+    int LiftSetPtLvl2 = 1500;
     int ClimbSetPtUp = -3000;
     int ClimbSetPtDown = -10;
 
 //---------------------------------------------------------------------------
 
     //Servo Set Points
-    static final double WristSetPtOut = 0.05;
-    static final double WristSetPtIn = 0.3;
-    static final double ClawSetPtClosed = 0;
+    static final double WristSetPtIn = 0.6;
+    static final double WristSetPtOut = 0.21;
+    static final double WristSetPtScore = 0.45;
+    static final double ClawSetPtClosed = 0.04;
     static final double ClawSetPtOpen = 0.2;
 
 //---------------------------------------------------------------------------
@@ -95,8 +96,8 @@ public class A_CompCode extends LinearOpMode {
         Servo Claw = hardwareMap.servo.get("Claw");
 
         //Initialise Servos
-        Claw.setPosition(0.2);
-        Wrist.setPosition(0.05);
+        Claw.setPosition(ClawSetPtClosed);
+        Wrist.setPosition(WristSetPtIn);
 
 //---------------------------------------------------------------------------
 
@@ -137,7 +138,7 @@ public class A_CompCode extends LinearOpMode {
             //Drive Control
             //Slow Driving
             if (gamepad1.x) {
-                LeftStickY = -gamepad1.left_stick_y * 0.1;
+                LeftStickY = -gamepad1.left_stick_y * 0.2;
                 LeftStickX = gamepad1.left_stick_x * 0.2;
             } else {
                 LeftStickY = -gamepad1.left_stick_y;
@@ -177,9 +178,12 @@ public class A_CompCode extends LinearOpMode {
                 Lift.setPower(AutoLiftSpeed);
                 //Set Run Mode
                 Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //retract wrist & Close Claw
+                Claw.setPosition(ClawSetPtClosed);
+                Wrist.setPosition(WristSetPtIn);
                 //Wait for Target Position
                 while (opModeIsActive() && Lift.isBusy()) {
-                    telemetry.addLine("Going to A");
+                    telemetry.addLine("Lift Going to A");
                     telemetry.addData("Motor Position", Lift.getCurrentPosition());
                     telemetry.update();
                 } // while
@@ -195,9 +199,11 @@ public class A_CompCode extends LinearOpMode {
                 Lift.setPower(AutoLiftSpeed);
                 //Set Run Mode
                 Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //extend wrist
+                Wrist.setPosition(WristSetPtScore);
                 //Wait for Target Position
                 while (opModeIsActive() && Lift.isBusy()) {
-                    telemetry.addLine("Going to B");
+                    telemetry.addLine("Lift Going to B");
                     telemetry.addData("Motor Position", Lift.getCurrentPosition());
                     telemetry.update();
                 }
@@ -213,9 +219,11 @@ public class A_CompCode extends LinearOpMode {
                 Lift.setPower(AutoLiftSpeed);
                 //Set Run Mode
                 Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //extend wrist
+                Wrist.setPosition(WristSetPtScore);
                 //Wait for Target Position
                 while (opModeIsActive() && Lift.isBusy()) {
-                    telemetry.addLine("Going to B");
+                    telemetry.addLine("Lift Going to B");
                     telemetry.addData("Motor Position", Lift.getCurrentPosition());
                     telemetry.update();
                 }
@@ -224,19 +232,23 @@ public class A_CompCode extends LinearOpMode {
                 //Reset Run Mode
                 Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            } else {
-                // No button (a,b,y) is pressed, so see if the joystick is moved, but keep lift within min <> max
-                if (Lift.getCurrentPosition() < maxLiftEncoderCount && Lift.getCurrentPosition() > minLiftEncoderCount) {
-                    // Lift is in a safe place (between max and min) so action what the joystick says
-                    Lift.setPower(gamepad1.right_stick_y * AutoLiftSpeed);
-                } else if (Lift.getCurrentPosition() >= maxLiftEncoderCount) {
-                    // Lift is above max, so bounce down a little
-                    Lift.setPower(LiftBounceDown * ManualLiftSpeed);
-                } else if (Lift.getCurrentPosition() <= minLiftEncoderCount){
-                    // Lift is below min so bounce up a little
-                    Lift.setPower(LiftBounceUp * AutoLiftSpeed);
-                } // end if lift in safe zone
-            } // end if button pressed
+            }
+
+            Lift.setPower(gamepad1.right_stick_y * ManualLiftSpeed);
+
+//            else {
+//                // No button (a,b,y) is pressed, so see if the joystick is moved, but keep lift within min <> max
+//                if (Lift.getCurrentPosition() < maxLiftEncoderCount && Lift.getCurrentPosition() > minLiftEncoderCount) {
+//                    // Lift is in a safe place (between max and min) so action what the joystick says
+//                    Lift.setPower(gamepad1.right_stick_y * ManualLiftSpeed);
+//                } else if (Lift.getCurrentPosition() >= maxLiftEncoderCount) {
+//                    // Lift is above max, so bounce down a little
+//                    Lift.setPower(LiftBounceDown * AutoLiftSpeed);
+//                } else if (Lift.getCurrentPosition() <= minLiftEncoderCount){
+//                    // Lift is below min so bounce up a little
+//                    Lift.setPower(LiftBounceUp * AutoLiftSpeed);
+//                } // end if lift in safe zone
+//            } // end if button pressed
 
 //---------------------------------------------------------------------------
 
@@ -250,7 +262,7 @@ public class A_CompCode extends LinearOpMode {
                 Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //Wait for Target Position
                 while (opModeIsActive() && Climb.isBusy()) {
-                    telemetry.addLine("Going Up");
+                    telemetry.addLine("Climb Going Up");
                     telemetry.addData("Motor Position", Climb.getCurrentPosition());
                     telemetry.update();
                 }
@@ -268,7 +280,7 @@ public class A_CompCode extends LinearOpMode {
                 Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //Wait for Target Position
                 while (opModeIsActive() && Climb.isBusy()) {
-                    telemetry.addLine("Going Down");
+                    telemetry.addLine("Climb Going Down");
                     telemetry.addData("Motor Position", Climb.getCurrentPosition());
                     telemetry.update();
                 }
@@ -284,9 +296,11 @@ public class A_CompCode extends LinearOpMode {
             //Check if the button is currently pressed and was not pressed in the previous iteration
             if (currentLBumperButtonState && !previousLBumperButtonState) {
                 if (WristOut) {
+                    Claw.setPosition(ClawSetPtClosed);
                     Wrist.setPosition(WristSetPtIn);
                     //Wrist In
                 } else {
+                    Claw.setPosition(ClawSetPtOpen);
                     Wrist.setPosition(WristSetPtOut);
                     //Wrist Out
                 }
@@ -338,6 +352,16 @@ public class A_CompCode extends LinearOpMode {
             telemetry.addData("Wrist State", WristOut ? "Out" : "In");
             //Update
             telemetry.update();
+
+
         }
     }
+
+    static void DoStuff (double position) {
+
+
+
+
+    } // end of method DoStuff
+
 }

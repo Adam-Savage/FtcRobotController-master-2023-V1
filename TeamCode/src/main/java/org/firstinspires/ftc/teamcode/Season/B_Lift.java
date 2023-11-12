@@ -109,7 +109,7 @@ public class B_Lift extends LinearOpMode {
                 Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             } else {
                 double lifting = gamepad1.right_stick_y;
-                Lift.setPower(lifting * LiftSpeed);
+                Lift.setPower(lifting * ManualLiftSpeed);
             }
 
             //Telemetry Update
