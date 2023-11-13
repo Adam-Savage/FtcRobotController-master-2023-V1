@@ -50,8 +50,10 @@ public class A_CompCode extends LinearOpMode {
     static final double WristSetPtIn = 0.6;
     static final double WristSetPtOut = 0.21;
     static final double WristSetPtScore = 0.45;
-    static final double ClawSetPtClosed = 0.04;
-    static final double ClawSetPtOpen = 0.2;
+    static final double ClawSetPtClosed = 0.02;
+    static final double ClawSetPtOpen = 0.11;
+    static final double ClawSetPtSingleSmall = 0;
+    static final double ClawSetPtSingleWide = 0.05;
 
 //---------------------------------------------------------------------------
     @Override
@@ -131,13 +133,13 @@ public class A_CompCode extends LinearOpMode {
             //Claw Control
             boolean currentRBumperButtonState = gamepad1.right_bumper;
             //Wrist Control
-            boolean currentLBumperButtonState = gamepad1.left_bumper;
+            boolean currentLBumperButtonState = gamepad1.x;
 
 //---------------------------------------------------------------------------
 
             //Drive Control
             //Slow Driving
-            if (gamepad1.x) {
+            if (gamepad1.left_bumper) {
                 LeftStickY = -gamepad1.left_stick_y * 0.2;
                 LeftStickX = gamepad1.left_stick_x * 0.2;
             } else {
@@ -181,6 +183,7 @@ public class A_CompCode extends LinearOpMode {
                 //retract wrist & Close Claw
                 Claw.setPosition(ClawSetPtClosed);
                 Wrist.setPosition(WristSetPtIn);
+                ClawOpen = false;
                 //Wait for Target Position
                 while (opModeIsActive() && Lift.isBusy()) {
                     telemetry.addLine("Lift Going to A");
@@ -297,15 +300,17 @@ public class A_CompCode extends LinearOpMode {
             if (currentLBumperButtonState && !previousLBumperButtonState) {
                 if (WristOut) {
                     Claw.setPosition(ClawSetPtClosed);
+                    ClawOpen = false;
                     Wrist.setPosition(WristSetPtIn);
+                    WristOut = false;
                     //Wrist In
                 } else {
                     Claw.setPosition(ClawSetPtOpen);
+                    ClawOpen = true;
                     Wrist.setPosition(WristSetPtOut);
+                    WristOut = true;
                     //Wrist Out
                 }
-                WristOut = !WristOut;
-                //Toggle State
             }
 
 //---------------------------------------------------------------------------
@@ -315,13 +320,23 @@ public class A_CompCode extends LinearOpMode {
             if (currentRBumperButtonState && !previousRBumperButtonState) {
                 if (ClawOpen) {
                     Claw.setPosition(ClawSetPtClosed);
+                    ClawOpen = false;
                     //Claw Closed
                 } else {
                     Claw.setPosition(ClawSetPtOpen);
+                    ClawOpen = true;
                     //Claw Open
                 }
-                ClawOpen = !ClawOpen;
-                //Toggle State
+            }
+
+            if (gamepad1.dpad_right) {
+                Claw.setPosition(ClawSetPtSingleSmall);
+                ClawOpen = false;
+            }
+
+            if (gamepad1.dpad_left) {
+                Claw.setPosition(ClawSetPtSingleWide);
+                ClawOpen = false;
             }
 
 //---------------------------------------------------------------------------
