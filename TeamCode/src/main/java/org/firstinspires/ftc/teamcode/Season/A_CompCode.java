@@ -13,27 +13,15 @@ public class A_CompCode extends LinearOpMode {
 
 //---------------------------------------------------------------------------
 
-    //Initialise Servo State
-    boolean ClawOpen = false;
-    boolean WristOut = false;
-
-//---------------------------------------------------------------------------
-
-    //Set Speed
+    //Motor Speed
     static final double ClimbSpeedUp = -0.6;
     static final double ClimbSpeedDown = 1;
+
     static final double ManualLiftSpeed = -0.5;
     static final double AutoLiftSpeed = -1;
+
     static final double LiftBounceDown = -1;
     static final double LiftBounceUp = 1;
-
-//---------------------------------------------------------------------------
-
-    //Set Endpoints
-    int maxLiftEncoderCount = -5000;
-    int minLiftEncoderCount = 0;
-    int maxClimbEncoderCount = 5000;
-    int minClimbEncoderCount = 0;
 
 //---------------------------------------------------------------------------
 
@@ -41,8 +29,24 @@ public class A_CompCode extends LinearOpMode {
     int LiftSetPtIntake = 0;
     int LiftSetPtLvl1 = 600;
     int LiftSetPtLvl2 = 1500;
+
     int ClimbSetPtUp = -3000;
     int ClimbSetPtDown = -10;
+
+//---------------------------------------------------------------------------
+
+    //Motor Endpoints
+    int maxLiftEncoderCount = -5000;
+    int minLiftEncoderCount = 0;
+
+    int maxClimbEncoderCount = 5000;
+    int minClimbEncoderCount = 0;
+
+//---------------------------------------------------------------------------
+
+    //Initialise Servo State
+    boolean ClawOpen = false;
+    boolean WristOut = false;
 
 //---------------------------------------------------------------------------
 
@@ -50,6 +54,7 @@ public class A_CompCode extends LinearOpMode {
     static final double WristSetPtIn = 0.6;
     static final double WristSetPtOut = 0.21;
     static final double WristSetPtScore = 0.45;
+
     static final double ClawSetPtClosed = 0.02;
     static final double ClawSetPtOpen = 0.11;
     static final double ClawSetPtSingleSmall = 0;
@@ -106,7 +111,7 @@ public class A_CompCode extends LinearOpMode {
         //Track Previous State of Buttons
         boolean previousRBumperButtonState = false;
         //Claw Control
-        boolean previousLBumperButtonState = false;
+        boolean previousXButtonState = false;
         //Wrist Control
 
 //---------------------------------------------------------------------------
@@ -133,7 +138,7 @@ public class A_CompCode extends LinearOpMode {
             //Claw Control
             boolean currentRBumperButtonState = gamepad1.right_bumper;
             //Wrist Control
-            boolean currentLBumperButtonState = gamepad1.x;
+            boolean currentXButtonState = gamepad1.x;
 
 //---------------------------------------------------------------------------
 
@@ -297,7 +302,7 @@ public class A_CompCode extends LinearOpMode {
 
             //Wrist Toggle
             //Check if the button is currently pressed and was not pressed in the previous iteration
-            if (currentLBumperButtonState && !previousLBumperButtonState) {
+            if (currentXButtonState && !previousXButtonState) {
                 if (WristOut) {
                     Claw.setPosition(ClawSetPtClosed);
                     ClawOpen = false;
@@ -344,7 +349,7 @@ public class A_CompCode extends LinearOpMode {
             //Update previous button states
             previousRBumperButtonState = currentRBumperButtonState;
             //Claw Button State
-            previousLBumperButtonState = currentLBumperButtonState;
+            previousXButtonState = currentXButtonState;
             //Wrist Button State
 
 //---------------------------------------------------------------------------
