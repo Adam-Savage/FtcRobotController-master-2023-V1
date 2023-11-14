@@ -34,8 +34,8 @@ public class A_CompCode extends LinearOpMode {
     public static int LiftSetPtLvl2 = 1000;
     public static int LiftSetPtLvl3 = 1600;
 
-//    int ClimbSetPtUp = -3000;
-//    int ClimbSetPtDown = -10;
+    int ClimbSetPtUp = -3000;
+    int ClimbSetPtDown = -10;
 
 //---------------------------------------------------------------------------
 
@@ -59,10 +59,11 @@ public class A_CompCode extends LinearOpMode {
     public static double WristSetPtOut = 0.66;
     public static double WristSetPtScore = 0.48;
 
-    public static double ClawSetPtClosed = 0.11;
-    public static double ClawSetPtOpen = 0.0;
-    public static double ClawSetPtSingleSmall = 0;
-    public static double ClawSetPtSingleWide = 0.05;
+    public static double ClawSetPtClosed = 0.97;
+    public static double ClawSetPtOpen = 0.88;
+    public static double ClawSetPtSingleSmall = 1;
+    public static double ClawSetPtSingleWide = 0.8;
+    public static double ClawSetPtOpenSingleWide = 0.75;
 
 //---------------------------------------------------------------------------
 
@@ -77,6 +78,8 @@ public class A_CompCode extends LinearOpMode {
     //Auto Pick up sleeps
     public static int WristSleepDown = 400;
     public static int WristSleepUp = 0;
+    public static int WristSleepDownSmall = 400;
+    public static int WristSleepUpSmall = 200;
     public static int WristSleepBack = 100;
 
 //---------------------------------------------------------------------------
@@ -319,14 +322,38 @@ public class A_CompCode extends LinearOpMode {
                 }
             }
 
-            if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_right && Lift.getCurrentPosition() < 100) {
+                Claw.setPosition(ClawSetPtOpen);
+                ClawOpen = true;
+                Wrist.setPosition(WristSetPtOut);
+                WristOut = true;
+                //Wrist Out
+                sleep(WristSleepDownSmall);
                 Claw.setPosition(ClawSetPtSingleSmall);
                 ClawOpen = false;
+                //pick up pixel
+                sleep(WristSleepUpSmall);
+                //wait for claw to close
+                Wrist.setPosition(WristSetPtIn);
+                WristOut = false;
+                //Wrist In
             }
 
             if (gamepad1.dpad_left) {
+                Claw.setPosition(ClawSetPtOpenSingleWide);
+                ClawOpen = true;
+                Wrist.setPosition(WristSetPtOut);
+                WristOut = true;
+                //Wrist Out
+                sleep(WristSleepDownSmall);
                 Claw.setPosition(ClawSetPtSingleWide);
                 ClawOpen = false;
+                //pick up pixel
+                sleep(WristSleepUpSmall);
+                //wait for claw to close
+                Wrist.setPosition(WristSetPtIn);
+                WristOut = false;
+                //Wrist In
             }
 
 //---------------------------------------------------------------------------
