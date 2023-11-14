@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 @TeleOp
@@ -33,16 +34,32 @@ public class B_Lift extends LinearOpMode {
 //    int LiftSetPtLvl1 = 2000;
 //    int LiftSetPtLvl2 = 4000;
 
+    //Servo Set Points
+    static final double WristSetPtIn = 0.6;
+    static final double WristSetPtOut = 0.21;
+    static final double WristSetPtScore = 0.45;
+
+    static final double ClawSetPtClosed = 0.02;
+    static final double ClawSetPtOpen = 0.11;
+    static final double ClawSetPtSingleSmall = 0;
+    static final double ClawSetPtSingleWide = 0.05;
+
+    //Motor Set Points
+    int LiftSetPtIntake = 0;
+    int LiftSetPtLvl1 = 600;
+    int LiftSetPtLvl2 = 1500;
+
+    int ClimbSetPtUp = -3000;
+    int ClimbSetPtDown = -10;
+
 //---------------------------------------------------------------------------
 
     private PIDController controller;
 
-    public static double p = 0, i = 0, d = 0;
-    public static double f = 0;
+    public static double p = 0.04, i = 0.001, d = 0.0001;
+    public static double f = 0.0001;
 
     public static int target = 0;
-
-    private final double ticks_in_degree = 700 / 180.0;
 
     private DcMotorEx Lift;
 
@@ -66,6 +83,14 @@ public class B_Lift extends LinearOpMode {
 //        //Verify Robot Waiting
 //        telemetry.addData(">", "Robot Ready.  Press Play.");
 //        telemetry.update();
+
+        //Servo Declaration
+        Servo Wrist = hardwareMap.servo.get("Wrist");
+        Servo Claw = hardwareMap.servo.get("Claw");
+
+        //Initialise Servos
+        Claw.setPosition(ClawSetPtClosed);
+        Wrist.setPosition(WristSetPtIn);
 
 //---------------------------------------------------------------------------
 
@@ -140,25 +165,64 @@ public class B_Lift extends LinearOpMode {
 //                Lift.setPower(lifting * ManualLiftSpeed);
 //            }
 
+            //dad's soft limits
+//            else {
+//                // No button (a,b,y) is pressed, so see if the joystick is moved, but keep lift within min <> max
+//                if (Lift.getCurrentPosition() < maxLiftEncoderCount && Lift.getCurrentPosition() > minLiftEncoderCount) {
+//                    // Lift is in a safe place (between max and min) so action what the joystick says
+//                    Lift.setPower(gamepad1.right_stick_y * ManualLiftSpeed);
+//                } else if (Lift.getCurrentPosition() >= maxLiftEncoderCount) {
+//                    // Lift is above max, so bounce down a little
+//                    Lift.setPower(LiftBounceDown * AutoLiftSpeed);
+//                } else if (Lift.getCurrentPosition() <= minLiftEncoderCount){
+//                    // Lift is below min so bounce up a little
+//                    Lift.setPower(LiftBounceUp * AutoLiftSpeed);
+//                } // end if lift in safe zone
+//            } // end if button pressed
+
+
+
+            if (gamepad1.a) {
+                Claw.setPosition(ClawSetPtClosed);
+                Wrist.setPosition(WristSetPtIn);
+                target = 0;
+            }
+
+            else if (gamepad1.x) {
+                Claw.setPosition(ClawSetPtOpen);
+                Wrist.setPosition(WristSetPtOut);
+                target = LiftSetPtIntake;
+            }
+
+            else if (gamepad1.b) {
+                Wrist.setPosition(WristSetPtScore);
+                target = LiftSetPtLvl1;
+            }
+
+            else if (gamepad1.y) {
+                Wrist.setPosition(WristSetPtScore);
+                target = LiftSetPtLvl2;
+            }
+
             controller.setPID(p, i, d);
-            int armPos = Lift.getCurrentPosition();
-            double pid = controller.calculate(armPos, target);
-            double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
+            int LiftPos = Lift.getCurrentPosition();
+            double pid = controller.calculate(LiftPos, target);
+            double ff = target * f;
 
             double power = pid + ff;
 
             Lift.setPower(power);
 
-            telemetry.addData("pos", armPos);
+            telemetry.addData("pos", LiftPos);
             telemetry.addData("target", target);
             telemetry.update();
 
 
 
-            //Telemetry Update
-            telemetry.addData("Lift Power", gamepad1.right_stick_y);
-            telemetry.addData("Lift Position", Lift.getCurrentPosition());
-            telemetry.update();
+//            //Telemetry Update
+//            telemetry.addData("Lift Power", gamepad1.right_stick_y);
+//            telemetry.addData("Lift Position", Lift.getCurrentPosition());
+//            telemetry.update();
 
             }
         }

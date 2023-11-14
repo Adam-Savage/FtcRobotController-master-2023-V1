@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode.Season;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
+@Config
 @TeleOp
 public class A_CompCode extends LinearOpMode {
 
@@ -61,6 +67,17 @@ public class A_CompCode extends LinearOpMode {
     static final double ClawSetPtSingleWide = 0.05;
 
 //---------------------------------------------------------------------------
+
+    //PIDF Variables
+    private PIDController controller;
+
+    public static double p = 0.04, i = 0.001, d = 0.0001;
+    public static double f = 0.0001;
+
+    public static int target = 0;
+    private DcMotorEx Lift;
+
+//---------------------------------------------------------------------------
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -93,8 +110,8 @@ public class A_CompCode extends LinearOpMode {
         Climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Enable Break
-        Climb.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-        Lift.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+//        Climb.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+//        Lift.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
 //---------------------------------------------------------------------------
 
@@ -116,6 +133,12 @@ public class A_CompCode extends LinearOpMode {
 
 //---------------------------------------------------------------------------
 
+        //PIDF Setup
+        controller = new PIDController(p, i, d);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+//---------------------------------------------------------------------------
+
         //Verify Robot Waiting
         telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();
@@ -131,8 +154,8 @@ public class A_CompCode extends LinearOpMode {
 //---------------------------------------------------------------------------
 
             //Initialise Encoders
-            int currentLiftPosition = Lift.getCurrentPosition();
-            int currentClimbPosition = Climb.getCurrentPosition();
+//            int currentLiftPosition = Lift.getCurrentPosition();
+//            int currentClimbPosition = Climb.getCurrentPosition();
 
             //Initialise Buttons
             //Claw Control
@@ -178,85 +201,95 @@ public class A_CompCode extends LinearOpMode {
 //---------------------------------------------------------------------------
 
             //Lift Control
+            //PIDF Loop
+            controller.setPID(p, i, d);
+            int LiftPos = Lift.getCurrentPosition();
+            double pid = controller.calculate(LiftPos, target);
+            double ff = target * f;
+
+            double power = pid + ff;
+            Lift.setPower(power);
+
             //A Button Pressed
             if (gamepad1.a) {
-                //Set Target Position and Power to lowest position
-                Lift.setTargetPosition(LiftSetPtIntake);
-                Lift.setPower(AutoLiftSpeed);
-                //Set Run Mode
-                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                //Set Target Position and Power to lowest position
+//                Lift.setTargetPosition(LiftSetPtIntake);
+//                Lift.setPower(AutoLiftSpeed);
+//                //Set Run Mode
+//                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 //retract wrist & Close Claw
                 Claw.setPosition(ClawSetPtClosed);
                 Wrist.setPosition(WristSetPtIn);
                 ClawOpen = false;
-                //Wait for Target Position
-                while (opModeIsActive() && Lift.isBusy()) {
-                    telemetry.addLine("Lift Going to A");
-                    telemetry.addData("Motor Position", Lift.getCurrentPosition());
-                    telemetry.update();
-                } // while
-                //Reset Power
-                Lift.setPower(0);
-                //Reset Run Mode
-                Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                //Lift to position
+                target = LiftSetPtIntake;
+
+//                //Wait for Target Position
+//                while (opModeIsActive() && Lift.isBusy()) {
+//                    telemetry.addLine("Lift Going to A");
+//                    telemetry.addData("Motor Position", Lift.getCurrentPosition());
+//                    telemetry.update();
+//                }
+//                //Reset Power
+//                Lift.setPower(0);
+//                //Reset Run Mode
+//                Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //B Button Pressed
             } else if (gamepad1.b) {
-                //Set Target Position and Power to set point 1
-                Lift.setTargetPosition(LiftSetPtLvl1);
-                Lift.setPower(AutoLiftSpeed);
-                //Set Run Mode
-                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                //Set Target Position and Power to set point 1
+//                Lift.setTargetPosition(LiftSetPtLvl1);
+//                Lift.setPower(AutoLiftSpeed);
+//                //Set Run Mode
+//                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 //extend wrist
                 Wrist.setPosition(WristSetPtScore);
-                //Wait for Target Position
-                while (opModeIsActive() && Lift.isBusy()) {
-                    telemetry.addLine("Lift Going to B");
-                    telemetry.addData("Motor Position", Lift.getCurrentPosition());
-                    telemetry.update();
-                }
-                //Reset Power
-                Lift.setPower(0);
-                //Reset Run Mode
-                Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                //Lift to position
+                target = LiftSetPtLvl1;
+
+//                //Wait for Target Position
+//                while (opModeIsActive() && Lift.isBusy()) {
+//                    telemetry.addLine("Lift Going to B");
+//                    telemetry.addData("Motor Position", Lift.getCurrentPosition());
+//                    telemetry.update();
+//                }
+//                //Reset Power
+//                Lift.setPower(0);
+//                //Reset Run Mode
+//                Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //Y Button Pressed
             } else if (gamepad1.y) {
-                //Set Target Position and Power to set point 2
-                Lift.setTargetPosition(LiftSetPtLvl2);
-                Lift.setPower(AutoLiftSpeed);
-                //Set Run Mode
-                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                //Set Target Position and Power to set point 2
+//                Lift.setTargetPosition(LiftSetPtLvl2);
+//                Lift.setPower(AutoLiftSpeed);
+//                //Set Run Mode
+//                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 //extend wrist
                 Wrist.setPosition(WristSetPtScore);
-                //Wait for Target Position
-                while (opModeIsActive() && Lift.isBusy()) {
-                    telemetry.addLine("Lift Going to B");
-                    telemetry.addData("Motor Position", Lift.getCurrentPosition());
-                    telemetry.update();
-                }
-                //Reset Power
-                Lift.setPower(0);
-                //Reset Run Mode
-                Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                //Lift to position
+                target = LiftSetPtLvl2;
+
+//                //Wait for Target Position
+//                while (opModeIsActive() && Lift.isBusy()) {
+//                    telemetry.addLine("Lift Going to B");
+//                    telemetry.addData("Motor Position", Lift.getCurrentPosition());
+//                    telemetry.update();
+//                }
+//                //Reset Power
+//                Lift.setPower(0);
+//                //Reset Run Mode
+//                Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             }
 
-            Lift.setPower(gamepad1.right_stick_y * ManualLiftSpeed);
-
-//            else {
-//                // No button (a,b,y) is pressed, so see if the joystick is moved, but keep lift within min <> max
-//                if (Lift.getCurrentPosition() < maxLiftEncoderCount && Lift.getCurrentPosition() > minLiftEncoderCount) {
-//                    // Lift is in a safe place (between max and min) so action what the joystick says
-//                    Lift.setPower(gamepad1.right_stick_y * ManualLiftSpeed);
-//                } else if (Lift.getCurrentPosition() >= maxLiftEncoderCount) {
-//                    // Lift is above max, so bounce down a little
-//                    Lift.setPower(LiftBounceDown * AutoLiftSpeed);
-//                } else if (Lift.getCurrentPosition() <= minLiftEncoderCount){
-//                    // Lift is below min so bounce up a little
-//                    Lift.setPower(LiftBounceUp * AutoLiftSpeed);
-//                } // end if lift in safe zone
-//            } // end if button pressed
+//            Lift.setPower(gamepad1.right_stick_y * ManualLiftSpeed);
 
 //---------------------------------------------------------------------------
 
@@ -302,20 +335,26 @@ public class A_CompCode extends LinearOpMode {
 
             //Wrist Toggle
             //Check if the button is currently pressed and was not pressed in the previous iteration
-            if (currentXButtonState && !previousXButtonState) {
-                if (WristOut) {
-                    Claw.setPosition(ClawSetPtClosed);
-                    ClawOpen = false;
-                    Wrist.setPosition(WristSetPtIn);
-                    WristOut = false;
-                    //Wrist In
-                } else {
-                    Claw.setPosition(ClawSetPtOpen);
-                    ClawOpen = true;
-                    Wrist.setPosition(WristSetPtOut);
-                    WristOut = true;
-                    //Wrist Out
-                }
+//            if (currentXButtonState && !previousXButtonState) {
+//                if (WristOut) {
+//                    Claw.setPosition(ClawSetPtClosed);
+//                    ClawOpen = false;
+//                    Wrist.setPosition(WristSetPtIn);
+//                    WristOut = false;
+//                    //Wrist In
+//                } else {
+//                    Claw.setPosition(ClawSetPtOpen);
+//                    ClawOpen = true;
+//                    Wrist.setPosition(WristSetPtOut);
+//                    WristOut = true;
+//                    //Wrist Out
+//                }
+//            }
+
+            if (gamepad1.x) {
+                Claw.setPosition(ClawSetPtOpen);
+                Wrist.setPosition(WristSetPtOut);
+                target = LiftSetPtIntake;
             }
 
 //---------------------------------------------------------------------------
