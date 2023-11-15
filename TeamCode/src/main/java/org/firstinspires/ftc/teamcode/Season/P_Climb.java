@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 @TeleOp
-public class E_Climb extends LinearOpMode {
+public class P_Climb extends LinearOpMode {
 
     //Set Speed
     static final double ClimbSpeedUp = -0.5;

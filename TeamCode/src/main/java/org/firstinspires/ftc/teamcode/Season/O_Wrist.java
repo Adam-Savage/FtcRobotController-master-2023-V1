@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class D_Wrist extends LinearOpMode {
+public class O_Wrist extends LinearOpMode {
 
     boolean WristOut = false;
 

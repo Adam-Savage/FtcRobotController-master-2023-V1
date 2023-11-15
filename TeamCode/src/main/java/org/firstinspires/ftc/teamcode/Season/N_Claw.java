@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class C_Claw extends LinearOpMode {
+public class N_Claw extends LinearOpMode {
 
     boolean ClawOpen = false;
 

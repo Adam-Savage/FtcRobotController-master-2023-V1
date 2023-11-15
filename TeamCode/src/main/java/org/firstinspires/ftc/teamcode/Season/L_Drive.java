@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
-public class A_Drive extends LinearOpMode {
+public class L_Drive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
