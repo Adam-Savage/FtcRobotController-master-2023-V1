@@ -7,11 +7,11 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 @Config
 @TeleOp
@@ -23,9 +23,6 @@ public class A_CompCode extends LinearOpMode {
     public static final double ClimbSpeedUp = -0.6;
     public static final double ClimbSpeedDown = 1;
 
-//    static final double LiftBounceDown = -1;
-//    static final double LiftBounceUp = 1;
-
 //---------------------------------------------------------------------------
 
     //Motor Set Points
@@ -34,17 +31,9 @@ public class A_CompCode extends LinearOpMode {
     public static int LiftSetPtLvl2 = 1000;
     public static int LiftSetPtLvl3 = 1600;
 
-    int ClimbSetPtUp = -3000;
-    int ClimbSetPtDown = -10;
-
-//---------------------------------------------------------------------------
-
-    //Motor Endpoints
-//    int maxLiftEncoderCount = -5000;
-//    int minLiftEncoderCount = 0;
-//
-//    int maxClimbEncoderCount = 5000;
-//    int minClimbEncoderCount = 0;
+    public static int ClimbSetPtUp = -3000;
+    public static int ClimbSetPtMid = -600;
+    public static int ClimbSetPtDown = -10;
 
 //---------------------------------------------------------------------------
 
@@ -65,6 +54,9 @@ public class A_CompCode extends LinearOpMode {
     public static double ClawSetPtSingleWide = 0.8;
     public static double ClawSetPtOpenSingleWide = 0.75;
 
+    public static double DroneSetPtClosed = 1;
+    public static double DroneSetPtOpen = 0;
+
 //---------------------------------------------------------------------------
 
     //PIDF Variables
@@ -74,6 +66,11 @@ public class A_CompCode extends LinearOpMode {
     public static double f = 0.0001;
 
     public static int target = 0;
+
+
+    //Limit Switch Definition
+    DigitalChannel limitSwitch;
+
 
     //Auto Pick up sleeps
     public static int WristSleepDown = 400;
@@ -121,24 +118,30 @@ public class A_CompCode extends LinearOpMode {
         //Servo Declaration
         Servo Wrist = hardwareMap.servo.get("Wrist");
         Servo Claw = hardwareMap.servo.get("Claw");
+        Servo Drone = hardwareMap.servo.get("Drone");
 
         //Initialise Servos
         Claw.setPosition(ClawSetPtClosed);
         Wrist.setPosition(WristSetPtIn);
+        Drone.setPosition(DroneSetPtClosed);
 
 //---------------------------------------------------------------------------
 
         //Track Previous State of Buttons
-        boolean previousRBumperButtonState = false;
         //Claw Control
-        boolean previousXButtonState = false;
+        boolean previousRBumperButtonState = false;
         //Wrist Control
+        boolean previousXButtonState = false;
 
 //---------------------------------------------------------------------------
 
         //PIDF Setup
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        //Limit Switch Setup
+        limitSwitch = hardwareMap.digitalChannel.get("LiftLimitSwitch");
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
 //---------------------------------------------------------------------------
 
@@ -200,6 +203,13 @@ public class A_CompCode extends LinearOpMode {
 //---------------------------------------------------------------------------
 
             //Lift Control
+
+            //Limit Switch Encoder Reset
+//            if (limitSwitch.getState() == false) {
+//                // Limit switch is pressed, reset the motor encoder
+//                Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            }
+
             //PIDF Loop
             controller.setPID(p, i, d);
             int LiftPos = Lift.getCurrentPosition();
@@ -212,14 +222,14 @@ public class A_CompCode extends LinearOpMode {
 
             //A Button Pressed
             if (gamepad1.a) {
-                    Wrist.setPosition(WristSetPtScore);
-                    target = LiftSetPtLvl1;
+                Wrist.setPosition(WristSetPtScore);
+                target = LiftSetPtLvl1;
                 }
 
             //B Button Pressed
             else if (gamepad1.b) {
-                    Wrist.setPosition(WristSetPtScore);
-                    target = LiftSetPtLvl2;
+                Wrist.setPosition(WristSetPtScore);
+                target = LiftSetPtLvl2;
                 }
 
             //Y Button Pressed
@@ -234,23 +244,49 @@ public class A_CompCode extends LinearOpMode {
                 //Dpad Up Pressed
             if (gamepad1.dpad_up) {
                 //Set Target Position and Power
+                Climb.setTargetPosition(ClimbSetPtMid);
+                Climb.setPower(ClimbSpeedUp);
+                //Set Run Mode
+                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //Wait for Target Position
+                while (opModeIsActive() && Climb.isBusy()) {
+                    telemetry.addLine("Climb Going Up: Take 1");
+                    telemetry.addData("Motor Position", Climb.getCurrentPosition());
+                    telemetry.update();
+                }
+
+                //Set Target Position and Power
+                Climb.setTargetPosition(ClimbSetPtDown);
+                Climb.setPower(ClimbSpeedDown);
+                //Set Run Mode
+                Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //Wait for Target Position
+                while (opModeIsActive() && Climb.isBusy()) {
+                    telemetry.addLine("Climb Extending Hook");
+                    telemetry.addData("Climb Position", Climb.getCurrentPosition());
+                    telemetry.update();
+                }
+
+                //Set Target Position and Power
                 Climb.setTargetPosition(ClimbSetPtUp);
                 Climb.setPower(ClimbSpeedUp);
                 //Set Run Mode
                 Climb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //Wait for Target Position
                 while (opModeIsActive() && Climb.isBusy()) {
-                    telemetry.addLine("Climb Going Up");
+                    telemetry.addLine("Climb Going Up: Take 2");
                     telemetry.addData("Motor Position", Climb.getCurrentPosition());
                     telemetry.update();
                 }
+
                 //Reset Power
                 Climb.setPower(0);
                 //Reset Run Mode
                 Climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
-                //Dpad Down Pressed
+
+            //Dpad Down Pressed
             else if (gamepad1.dpad_down) {
                 //Set Target Position and Power
                 Climb.setTargetPosition(ClimbSetPtDown);
@@ -271,8 +307,8 @@ public class A_CompCode extends LinearOpMode {
 
 //---------------------------------------------------------------------------
 
-                //Wrist Toggle
-                //Check if the button is currently pressed and was not pressed in the previous iteration
+            //Wrist Toggle
+            //Check if the button is currently pressed and was not pressed in the previous iteration
             if (currentXButtonState && !previousXButtonState) {
 
                 //If Lift in scoring, let go and retract wrist
@@ -308,8 +344,8 @@ public class A_CompCode extends LinearOpMode {
 
 //---------------------------------------------------------------------------
 
-                //Claw Toggle
-                //Check if the button is currently pressed and was not pressed in the previous iteration
+            //Manual Claw Toggle
+            //Check if the button is currently pressed and was not pressed in the previous iteration
             if (currentRBumperButtonState && !previousRBumperButtonState) {
                 if (ClawOpen) {
                     Claw.setPosition(ClawSetPtClosed);
@@ -322,6 +358,9 @@ public class A_CompCode extends LinearOpMode {
                 }
             }
 
+//---------------------------------------------------------------------------
+
+            //Auto Claw Toggle
             if (gamepad1.dpad_right && Lift.getCurrentPosition() < 100) {
                 Claw.setPosition(ClawSetPtOpen);
                 ClawOpen = true;
@@ -358,34 +397,49 @@ public class A_CompCode extends LinearOpMode {
 
 //---------------------------------------------------------------------------
 
-                //Update previous button states
-                previousRBumperButtonState = currentRBumperButtonState;
-                //Claw Button State
-                previousXButtonState = currentXButtonState;
-                //Wrist Button State
+            //Drone Control
+            //If Drone is closed
+            if (gamepad1.dpad_left && Drone.getPosition() < DroneSetPtOpen) {
+                //Open Drone Servo
+                Drone.setPosition(DroneSetPtOpen);
+            }
+            //If Drone is open
+            else if (gamepad1.dpad_left && Drone.getPosition() > DroneSetPtClosed) {
+                //Close Drone Servo
+                Drone.setPosition(DroneSetPtClosed);
+            }
 
 //---------------------------------------------------------------------------
 
-                //Telemetry Update
-                //Drive Information
-                telemetry.addData("Left Stick X", gamepad1.left_stick_x);
-                telemetry.addData("Left Stick Y", gamepad1.left_stick_y);
-                telemetry.addData("Strafe Left", gamepad1.left_trigger);
-                telemetry.addData("Strafe Right", gamepad1.right_trigger);
-                //Lift Information
-                telemetry.addData("1.Lift Position", Lift.getCurrentPosition());
-                telemetry.addData("2.Lift Target", target);
-                //Climb Information
-                telemetry.addData("5.Climb State", gamepad1.dpad_up ? "Up" : "Down");
-                telemetry.addData("6.Climb Position", Climb.getCurrentPosition());
-                //Claw Information
-                telemetry.addData("3.Claw State", ClawOpen ? "Open" : "Closed");
-                telemetry.addData("claw", Claw.getPosition());
-                //Wrist Information
-                telemetry.addData("4.Wrist State", WristOut ? "Out" : "In");
-                telemetry.addData("wrist", Wrist.getPosition());
-                //Update
-                telemetry.update();
+            //Update previous button states
+            previousRBumperButtonState = currentRBumperButtonState;
+            //Claw Button State
+            previousXButtonState = currentXButtonState;
+            //Wrist Button State
+
+//---------------------------------------------------------------------------
+
+            //Telemetry Update
+            //Drive Information
+            telemetry.addData("Left Stick X", gamepad1.left_stick_x);
+            telemetry.addData("Left Stick Y", gamepad1.left_stick_y);
+            telemetry.addData("Strafe Left", gamepad1.left_trigger);
+            telemetry.addData("Strafe Right", gamepad1.right_trigger);
+            //Lift Information
+            telemetry.addData("1.Lift Position", Lift.getCurrentPosition());
+            telemetry.addData("2.Lift Target", target);
+            telemetry.addData("Lift Limit Switch", limitSwitch.getState());
+            //Climb Information
+            telemetry.addData("5.Climb State", gamepad1.dpad_up ? "Up" : "Down");
+            telemetry.addData("6.Climb Position", Climb.getCurrentPosition());
+            //Claw Information
+            telemetry.addData("3.Claw State", ClawOpen ? "Open" : "Closed");
+            telemetry.addData("claw", Claw.getPosition());
+            //Wrist Information
+            telemetry.addData("4.Wrist State", WristOut ? "Out" : "In");
+            telemetry.addData("wrist", Wrist.getPosition());
+            //Update
+            telemetry.update();
 
 
             }
