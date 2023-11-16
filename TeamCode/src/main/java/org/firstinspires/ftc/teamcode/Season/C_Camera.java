@@ -1,19 +1,24 @@
 package org.firstinspires.ftc.teamcode.Season;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import android.util.Size;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.Locale;
 
 @Config
-@TeleOp(name = "Utility: Camera Frame Capture", group = "Utility")
+@TeleOp
 public class C_Camera extends LinearOpMode {
 
 //---------------------------------------------------------------------------
@@ -23,8 +28,8 @@ public class C_Camera extends LinearOpMode {
      */
     final boolean USING_WEBCAM = false;
     final BuiltinCameraDirection INTERNAL_CAM_DIR = BuiltinCameraDirection.BACK;
-    final int RESOLUTION_WIDTH = 640;
-    final int RESOLUTION_HEIGHT = 480;
+    final int RESOLUTION_WIDTH = 1280;
+    final int RESOLUTION_HEIGHT = 720;
 
     // Internal state
     boolean lastX;
@@ -35,6 +40,10 @@ public class C_Camera extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        CameraStreamSource C270 = hardwareMap.get(CameraStreamSource.class, "c270");
+        FtcDashboard.getInstance().startCameraStream(C270, 10);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 //---------------------------------------------------------------------------
 

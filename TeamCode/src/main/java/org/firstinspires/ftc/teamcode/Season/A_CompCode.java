@@ -31,7 +31,7 @@ public class A_CompCode extends LinearOpMode {
     public static int LiftSetPtLvl2 = 1000;
     public static int LiftSetPtLvl3 = 1600;
 
-    public static int ClimbSetPtUp = -3000;
+    public static int ClimbSetPtUp = -2980;
     public static int ClimbSetPtMid = -600;
     public static int ClimbSetPtDown = -10;
 
@@ -67,10 +67,12 @@ public class A_CompCode extends LinearOpMode {
 
     public static int target = 0;
 
+//---------------------------------------------------------------------------
 
     //Limit Switch Definition
     DigitalChannel limitSwitch;
 
+//---------------------------------------------------------------------------
 
     //Auto Pick up sleeps
     public static int WristSleepDown = 400;
